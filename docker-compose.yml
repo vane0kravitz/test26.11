@@ -3,24 +3,17 @@ version: "3"
 services:
   php-fpm:
     build:
-      context: ./docker
+      context: ./api/docker
       dockerfile: php-fpm.docker
     volumes:
-      - ./:/var/www/html
+      - ./api:/var/www/html
   php-cli:
     build:
-      context: ./docker
+      context: ./api/docker
       dockerfile: php-cli.docker
     volumes:
-      - ./:/var/www/html
+      - ./api/:/var/www/html
     working_dir: /var/www/html
-    tty: true
-
-  node:
-    image: node:lts
-    volumes:
-      - ./resources/assets:/var/www/ui
-    working_dir: /var/www/ui
     tty: true
 
   db:
@@ -33,15 +26,30 @@ services:
       MYSQL_PASSWORD: password
       MYSQL_DATABASE: database
     volumes:
-      - ./docker/mysql/databases:/var/lib/mysql
-      - ./var/docker/log/mysql:/var/log/mysql
+      - ./api/docker/mysql/databases:/var/lib/mysql
+      - ./api/var/docker/log/mysql:/var/log/mysql
 
   nginx:
     build:
-      context: ./docker
+      context: ./api/docker
       dockerfile: nginx.docker
     volumes:
-      - ./:/var/www/html
-      - ./var/docker/log/nginx:/var/log/nginx
+      - ./api/:/var/www/html
+      - ./api/var/docker/log/nginx:/var/log/nginx
+    ports:
+      - "8081:80"
+  ui-nginx:
+    build:
+      context: ./ui/docker
+      dockerfile: nginx.docker
+    volumes:
+      - ./ui:/var/www/ui
     ports:
       - "8080:80"
+
+  node:
+    image: node:lts
+    volumes:
+      - ./ui:/var/www/ui
+    working_dir: /var/www/ui
+    tty: true

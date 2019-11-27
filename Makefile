@@ -12,8 +12,11 @@ docker-up:
 api-composer:
 	docker-compose exec php-cli composer install
 
+api-composer-autoload:
+	docker-compose exec php-cli composer dump-autoload
+
 api-migration:
-    docker-compose exec php-cli php -r db/UsersMigration.php
+	docker-compose exec php-cli php -r db/UsersMigration.php
 
 ui-install:
 	docker-compose exec node npm install

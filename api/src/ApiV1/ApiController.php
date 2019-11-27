@@ -1,27 +1,28 @@
 <?php
 
-namespace App;
+namespace App\ApiV1;
 
 
-use App\Exception\RouteNotFoundException;
+use App\ApiInterface;
 use App\Models\Model;
+use App\Response;
 
-abstract class Api
+abstract class ApiController
 {
     protected $model;
     protected $response;
 
     public $name = 'v1';
     protected $method = '';
-    protected $action = '';
 
     public $requestUri = [];
     public $requestParams = [];
 
-    public function __construct(Model $model, Response $response) {
-
-        $this->response = $response;
+    public function __construct(Model $model)
+    {
+        $this->response = new Response;
         $this->model = $model;
+
         $this->requestUri = explode('/', trim($_SERVER['REQUEST_URI'],'/'));
         $this->requestParams = $_REQUEST;
 
@@ -35,34 +36,27 @@ abstract class Api
         }
     }
 
-    public function processRequest()
+    public function processRequest(ApiInterface $api): void
     {
+        $response = false;
         switch ($this->method) {
             case 'GET':
                 if ($this->requestParams['id']) {
-                    $response = $this->get($this->requestParams['id']);
+                    $response = $api->get($this->requestParams['id']);
                 } else {
-                    $response = $this->getAll();
+                    $response = $api->getAll();
                 };
                 break;
             case 'POST':
-                $response = $this->create($this->requestParams);
+                $response = $api->create($this->requestParams);
                 break;
             case 'DELETE':
-                $response = $this->delete($this->requestParams['id']);
+                $response = $api->delete($this->requestParams['id']);
                 break;
             default:
-                throw new RouteNotFoundException($this->method, $this->requestParams);
+                (new Response())('Not found', Response::STATUS_NOT_FOUND);
                 break;
         }
-        header($response['status_code_header']);
-        if ($response['body']) {
-            echo $response['body'];
-        }
+        (new Response())($response, Response::STATUS_OK);
     }
-
-    abstract protected function get(int $id);
-    abstract protected function getAll();
-    abstract protected function create(array $request);
-    abstract protected function delete(int $id);
 }

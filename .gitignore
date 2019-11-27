@@ -1,6 +1,1 @@
-/vendor
-/public/assets
-/var/docker
-/node_modules
-/docker/mysql/databases
 .idea/
