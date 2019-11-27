@@ -4,7 +4,7 @@ up: docker-up
 
 docker-clear:
 	docker-compose down --remove-orphans
-	sudo rm -rf var/docker
+	sudo rm -rf api/var/docker
 
 docker-up:
 	docker-compose up --build -d
