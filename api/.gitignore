@@ -4,3 +4,5 @@
 /node_modules
 /docker/mysql/databases
 .idea/
+phpunit.xml
+.phpunit.result.cache
