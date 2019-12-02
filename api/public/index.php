@@ -1,10 +1,9 @@
-<?php
+<?php declare(strict_types=1);
 
 use Dotenv\Dotenv;
-use App\ApiV1\UserController;
-use App\Response;
-use App\Models\UserModel;
-use App\Http\Request\RequestFactory;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response\JsonResponse;
+use Zend\Diactoros\ResponseFactory;
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
@@ -12,15 +11,7 @@ require 'vendor/autoload.php';
 $dotEnv = Dotenv::create(dirname(__DIR__));
 $dotEnv->load();
 
+$request = ServerRequestFactory::fromGlobals();
+$response = (new JsonResponse(['data' => 'json data']));
 
-$request = RequestFactory::fromGlobals();
-
-$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-$uri = explode( '/', $uri );
-
-if ($uri[1] !== 'api' || $uri[2] !== 'user') {
-    return (new Response())('Not found', Response::STATUS_NOT_FOUND);
-}
-
-$api = new UserController(new UserModel());
-$api->processRequest($api);
+echo $response->getBody();
