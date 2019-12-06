@@ -8,35 +8,37 @@
 
 namespace Tests\Http;
 
-use App\Http\Request\Request;
 use PHPUnit\Framework\TestCase;
+use Zend\Diactoros\Response\JsonResponse;
 
 class ResponseTest extends TestCase
 {
     public function testEmpty(): void
     {
-        $response = new Response($body = 'body');
-
-        self::assertEquals($body, $response->getBody());
-        self::assertEquals(200, $response->getStatus());
+        $response = new JsonResponse($body = ['body']);
+        self::assertEquals($body, $response->getPayload());
+        self::assertEquals(200, $response->getStatusCode());
         self::assertEquals('OK', $response->getReasonPhrase());
     }
 
     public function test404(): void
     {
-        $response = new Response($body = 'body', $status = 404);
-
-        self::assertEquals($body, $response->getBody());
-        self::assertEquals($status, $response->getStatus());
+        $response = new JsonResponse($body = ['body'], $status = 404);
+        self::assertEquals($body, $response->getPayload());
+        self::assertEquals($status, $response->getStatusCode());
         self::assertEquals('Not Found', $response->getReasonPhrase());
     }
 
     public function testHeaders(): void
     {
-        $response = (new Response)
+        $response = (new JsonResponse([]))
             ->withHeader($name = "name", $value = "value")
             ->withHeader($name1 = "name1", $value1 = "value1");
 
-        self::assertEquals([$name => $value, $name1 => $value1], $response->getHeaders());
+        self::assertEquals([
+            'content-type' => ['application/json'],
+            $name => [$value],
+            $name1 => [$value1]
+        ], $response->getHeaders());
     }
 }

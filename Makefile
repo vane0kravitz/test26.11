@@ -12,8 +12,12 @@ docker-up:
 api-composer:
 	docker-compose exec php-cli composer install
 
-api-require:
-	docker-compose exec php-cli composer require psr/http-message
+api-cli:
+	docker-compose exec php-cli /bin/bash
+
+api-gen-rsa:
+	docker-compose exec api-cli openssl genrsa -out private.key 2048
+	docker-compose exec api-cli openssl rsa -in private.key -pubout -out public.key
 
 api-composer-autoload:
 	docker-compose exec php-cli composer dump-autoload

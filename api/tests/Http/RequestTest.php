@@ -8,8 +8,8 @@
 
 namespace Tests\Http;
 
-use App\Http\Request\Request;
 use PHPUnit\Framework\TestCase;
+use Zend\Diactoros\ServerRequestFactory;
 
 class RequestTest extends TestCase
 {
@@ -22,10 +22,10 @@ class RequestTest extends TestCase
 
     public function testEmpty(): void
     {
-        $request = new Request;
+        $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         self::assertEquals([], $request->getQueryParams());
-        self::assertNull($request->getParsedBody());
+        self::assertEquals([], $request->getParsedBody());
     }
 
     public function testQueryParams(): void
@@ -35,17 +35,17 @@ class RequestTest extends TestCase
             'age' => 25,
         ];
 
-        $request = new Request;
+        $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         self::assertEquals($data, $request->getQueryParams());
-        self::assertNull($request->getParsedBody());
+        self::assertEquals([], $request->getParsedBody());
     }
 
     public function testParsedBody(): void
     {
         $_POST = $data = ['body' => 'test'];
 
-        $request = new Request;
+        $request = ServerRequestFactory::fromGlobals($_SERVER, $_GET, $_POST, $_COOKIE, $_FILES);
 
         self::assertEquals([], $request->getQueryParams());
         self::assertEquals($data, $request->getParsedBody());
