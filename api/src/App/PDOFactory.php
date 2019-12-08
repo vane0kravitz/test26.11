@@ -2,15 +2,20 @@
 
 namespace App;
 
+use Psr\Container\ContainerInterface;
+
 class PDOFactory
 {
-    public function __invoke(): \PDO
+    public function __invoke(ContainerInterface $container): \PDO
     {
-        $dsn = 'mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_DATABASE');
+        $config = $container->get('config')['db']['mysql'];
+
         return new \PDO(
-            $dsn,
-            getenv('DB_USER'),
-            getenv('DB_PASSWORD')
+            $config['dsn'],
+            $config['user'],
+            $config['pass'],
+            $config['options']
+
         );
     }
 }

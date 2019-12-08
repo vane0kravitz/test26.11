@@ -5,15 +5,18 @@ namespace App\Models;
 
 class UserModel extends Model
 {
+    /**
+     * @param int $id
+     * @return array
+     */
     public function get(int $id)
     {
-        $statement = "SELECT id, email FROM users WHERE id = ?;";
+        $statement = "SELECT * FROM users WHERE id = ?;";
 
         try {
             $statement = $this->db->prepare($statement);
             $statement->execute([$id]);
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
+            return $statement->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }
@@ -25,8 +28,7 @@ class UserModel extends Model
 
         try {
             $statement = $this->db->query($statement);
-            $result = $statement->fetchAll(\PDO::FETCH_ASSOC);
-            return $result;
+            return $statement->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\PDOException $e) {
             exit($e->getMessage());
         }

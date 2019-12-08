@@ -3,14 +3,12 @@
 namespace App\Models;
 
 
-use App\PDOFactory;
-
 abstract class Model
 {
     protected $db;
 
-    public function __construct()
+    public function __construct(\PDO $db)
     {
-        $this->db = (new PDOFactory)();
+        $this->db = $db;
     }
 }
